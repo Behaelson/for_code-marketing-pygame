@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, time
 from pygame.math import Vector2
 pygame.init()
 pygame.display.set_caption('semata')
@@ -124,6 +124,11 @@ class main:
             self.game_over()
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
+                while tempo_lim == False:
+                    limite = 1
+                    momento = time.time()
+                    if time.time() - momento > limite:
+                        tempo_lim = True
                 self.game_over()
 
 
@@ -143,15 +148,19 @@ while True:
             if event.key == pygame.K_UP or event.key == pygame.K_w:
                 if main_game.snake.direction.y != 1:
                     Snake.direction = Vector2(0,-1)
+                time.sleep(0.1)
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 if main_game.snake.direction.y != -1:
                     Snake.direction = Vector2(0,1)
+                time.sleep(0.1)
             if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 if main_game.snake.direction.x != 1:
                     Snake.direction = Vector2(-1,0)
+                time.sleep(0.1)
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 if main_game.snake.direction.x != -1:
                     Snake.direction = Vector2(1,0)
+                time.sleep(0.1)
     
     main_game.draw_elements()
     clock.tick(60)
