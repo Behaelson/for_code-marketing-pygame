@@ -109,7 +109,7 @@ class main:
         self.check_fail()
     
     def draw_elements(self):
-        screen.fill((157, 0 , 200))
+        screen.fill((157, 20 , 20))
         self.snake.draw_snake()
         self.fruta.draw_fruit()
         pygame.display.update()
