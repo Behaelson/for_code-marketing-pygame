@@ -1,4 +1,3 @@
-[1,2,3] + [1,1,1]
 import pygame
 import sys
 import random
@@ -253,4 +252,5 @@ while True:
 
     main_game.draw_elements(screen)
     pygame.display.update()
+
     clock.tick(FPS)
