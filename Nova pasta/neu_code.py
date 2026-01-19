@@ -4,6 +4,22 @@ import sys
 import random
 from pygame.math import Vector2
 from collections import deque
+from pathlib import Path
+
+
+#criar path
+base_dir = Path(__file__).resolve().parent #pega caminho da pasta onde o jogo esta
+usr_path = base_dir / 'assets'
+class Caminhos:
+    def __init__(self, folder_path):
+       path = Path(folder_path)
+       for f in path.rglob("*"):
+           if f.is_file():
+               self.__dict__[f.stem] = f
+
+    def __getattr__(self, name):
+        raise AttributeError(f"ERRO: arquivo '{name}' não encontrado.")
+caminho = Caminhos(usr_path)
 
 tamanho_cel = 32
 num_cel = 20
@@ -21,8 +37,8 @@ cor_fruta = (231, 71, 29)
 cor_texto = (255, 255, 255)
 cor_background = (125, 103, 234)
 
-usr_path = 'C:/Users/wandrey.lima/Downloads/jogo/'
-#temporário, esperando o path universal da arina
+#usr_path = 'C:/Users/wandrey.lima/Downloads/jogo/'
+#temporário, esperando o path universal da arina --> tentei
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
@@ -37,7 +53,7 @@ class fruta:
         self.randomize()
 
     def draw(self, surface):
-        self.image = pygame.image.load(usr_path+'fruta.png')
+        self.image = pygame.image.load(caminho.fruta)
         fruta_rect = pygame.Rect(
             int(self.pos.x * tamanho_cel),
             int(self.pos.y * tamanho_cel),
@@ -53,23 +69,23 @@ class fruta:
 
 class cobra:
     def __init__(self):
-        self.cabecaN = pygame.image.load(usr_path+'headN.png')
-        self.cabecaS = pygame.image.load(usr_path+'headS.png')
-        self.cabecaO = pygame.image.load(usr_path+'headO.png')
-        self.cabecaL = pygame.image.load(usr_path+'headL.png')
+        self.cabecaN = pygame.image.load(caminho.headN)
+        self.cabecaS = pygame.image.load(caminho.headS)
+        self.cabecaO = pygame.image.load(caminho.headO)
+        self.cabecaL = pygame.image.load(caminho.headL)
 
-        self.cauda_N = pygame.image.load(usr_path+'cauda_N.png')
-        self.cauda_S = pygame.image.load(usr_path+'cauda_S.png')
-        self.cauda_O = pygame.image.load(usr_path+'cauda_O.png')  
-        self.cauda_L = pygame.image.load(usr_path+'cauda_L.png')  
+        self.cauda_N = pygame.image.load(caminho.cauda_N)
+        self.cauda_S = pygame.image.load(caminho.cauda_S)
+        self.cauda_O = pygame.image.load(caminho.cauda_O)  
+        self.cauda_L = pygame.image.load(caminho.cauda_L)  
 
-        self.corpo_h = pygame.image.load(usr_path+'corpo_h.png')
-        self.corpo_v = pygame.image.load(usr_path+'corpo_v.png')
+        self.corpo_h = pygame.image.load(caminho.corpo_h)
+        self.corpo_v = pygame.image.load(caminho.corpo_v)
 
-        self.curva_NL = pygame.image.load(usr_path+'norte_leste.png')
-        self.curva_NO = pygame.image.load(usr_path+'norte_oeste.png')
-        self.curva_SL = pygame.image.load(usr_path+'sul_leste.png')
-        self.curva_SO = pygame.image.load(usr_path+'sul_oeste.png')
+        self.curva_NL = pygame.image.load(caminho.norte_leste)
+        self.curva_NO = pygame.image.load(caminho.norte_oeste)
+        self.curva_SL = pygame.image.load(caminho.sul_leste)
+        self.curva_SO = pygame.image.load(caminho.sul_oeste)
         self.reset()
 
     def reset(self):
