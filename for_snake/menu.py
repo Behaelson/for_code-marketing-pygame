@@ -1,11 +1,24 @@
 import pygame
 import sys
-
-import random #
+from pathlib import Path
+import random
 
 #sem essa biblioteca nao vai funcionar a função de redes sociais
 import webbrowser
 
+#path
+base_dir = Path(__file__).resolve().parent #pega caminho da pasta onde o jogo esta
+usr_path = base_dir / 'assets'
+class Caminhos:
+    def __init__(self, folder_path):
+       path = Path(folder_path)
+       for f in path.rglob("*"):
+           if f.is_file():
+               self.__dict__[f.stem] = f
+
+    def __getattr__(self, name):
+        raise AttributeError(f"ERRO: arquivo '{name}' não encontrado.")
+caminho = Caminhos(usr_path)
 
 # 1. Configurações Iniciais
 pygame.init()
@@ -14,15 +27,16 @@ ALTURA = (25 * 20) + (2 * 60)
 tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption("For_Snake")
 
-imagem_titulo = pygame.image.load('titulo.png')
+# imagem_titulo = pygame.image.load(caminho.titulo)
 cor_fundo = (0x1e, 0x16, 0x47)
 cor_botao = (0xFF, 0xFF, 0x00)
 
 #imagem dos icones 
 ################################3###############
-imagem_insta = pygame.image.load('Instagram.png')
-imagem_github = pygame.image.load('Github.webp')
-imagem_linkedin = pygame.image.load('Youtube.png')#todo lugar que se referir ao linkedin, agora e o toutube, mudei so o essencial pra funcionar por enquanto
+imagem_insta = pygame.image.load(caminho.Instagram)
+imagem_github = pygame.image.load(caminho.Github)
+imagem_linkedin = pygame.image.load(caminho.Youtube)
+# todo lugar que se referir ao linkedin, agora e o toutube, mudei so o essencial pra funcionar por enquanto
 
 lado_logo = 40
 margem_logo = 40
@@ -38,13 +52,8 @@ rect_botao_github = imagem_github.get_rect(bottomleft=((margem_logo*3) + (lado_l
 
 #####################################################
 
-asterisco = pygame.image.load('asterisco.png')
+asterisco = pygame.image.load(caminho.asterisco)
 asterisco = pygame.transform.smoothscale(asterisco, (lado_logo, lado_logo))
-
-
-
-
-
 
 # Cores
 BRANCO = (255, 255, 255)
@@ -53,14 +62,12 @@ CINZA = (200, 200, 200)
 VERMELHO = (255, 0, 0)
 VERDE_BOTAO = (0, 200, 0)
 
-# Fontes
-fonte_titulo = pygame.font.SysFont("arial", 60)
+# Fontes ##################################################
+fonte_titulo = pygame.font.SysFont("lexend_deca", 60)
 #fonte_botao = pygame.font.SysFont("arial", 40)
 fonte_botao = pygame.font.Font(None, 40)
 
-
-
-#PONTOS e busca do arquivo ###############################
+# PONTOS e busca do arquivo ###############################
 game_font = pygame.font.Font(None, 24)
 score_tabela = pygame.Rect(LARGURA/2 - 100, ALTURA - 150, 200, 50)
 
@@ -119,22 +126,23 @@ while True:
                     if rect_botao_github.collidepoint(evento.pos):
                         webbrowser.open("https://github.com/forcodeufrj")
                 
-    
+        
     
     if estado_jogo == "MENU":
         
-        tela.fill(cor_fundo)
-        
+        # tela.fill(cor_fundo)
+        background_menu = pygame.image.load(caminho.background_menu).convert()
+        tela.blit(background_menu, (0, 0))
         
         n = random.randint(1, 20)
         for i in range(n):
             tela.blit(asterisco, (random.randint(1, LARGURA),random.randint(1, ALTURA)))
         contador_fps=0  
             
-        tela.blit(imagem_titulo, ((LARGURA - imagem_titulo.get_width()) // 2, ALTURA / 2 - 250))  
+        # tela.blit(imagem_titulo, ((LARGURA - imagem_titulo.get_width()) // 2, ALTURA / 2 - 250))  
 
         
-        tela.blit(imagem_titulo, ((LARGURA - imagem_titulo.get_width()) // 2, ALTURA / 2 - 250))  
+        # tela.blit(imagem_titulo, ((LARGURA - imagem_titulo.get_width()) // 2, ALTURA / 2 - 250))  
         tela.blit(imagem_insta,rect_botao_insta)
         tela.blit( imagem_linkedin, rect_botao_linkedin)
         tela.blit(imagem_github,rect_botao_github)
@@ -146,21 +154,17 @@ while True:
         texto_botao = fonte_botao.render("START", True, PRETO)
         rect_texto_botao = texto_botao.get_rect(center=botao_play.center)
         tela.blit(texto_botao, rect_texto_botao)
-
-
         
         pygame.draw.rect(tela, cor_botao, score_tabela)
-        texto_score = game_font.render(f"SCORE:\n{lista_de_linhas[-1]}", True, PRETO)
+        texto_score = game_font.render(f"RECORDE:\n{lista_de_linhas[0]}", True, PRETO)
         rect_score_tabela = texto_score.get_rect(center=score_tabela.center)
         tela.blit(texto_score, rect_score_tabela)
         
     
     elif estado_jogo == "JOGO":
-        
         #esse import ta funcionando na minha maquina
         #mas pode ser q precise colocar todo o codigo do jogo aqui pra pegar
-        import neu_code.py
-
+        import jogo.py
     
     pygame.display.flip()
     relogio.tick(FPS)
