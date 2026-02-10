@@ -101,6 +101,11 @@ class cobra:
         self.headO = carregar_escala(caminho.headO)
         self.headL = carregar_escala(caminho.headL)
 
+        self.head_cN = carregar_escala(caminho.head_cN)
+        self.head_cS = carregar_escala(caminho.head_cS)
+        self.head_cO = carregar_escala(caminho.head_cO)
+        self.head_cL = carregar_escala(caminho.head_cL)
+
         self.cauda_N = carregar_escala(caminho.cauda_N)
         self.cauda_S = carregar_escala(caminho.cauda_S)
         self.cauda_O = carregar_escala(caminho.cauda_O)
@@ -113,15 +118,17 @@ class cobra:
         self.curva_NO = carregar_escala(caminho.curva_NO)
         self.curva_SL = carregar_escala(caminho.curva_SL)
         self.curva_SO = carregar_escala(caminho.curva_SO)
+
     def reset(self):
         self.body = deque([Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)])
         self.direction = Vector2(1, 0)
         self.new_block = False
         self.direction_queue = deque()
 
-    def design_cobra(self, surface):
+    def design_cobra(self, surface, fruta_pos):
         self.update_head_graphics()
         self.update_cauda_graphics()
+        self.sprite_head_comer(fruta_pos)
 
         for index, block in enumerate(self.body):
             x_pos = int(block.x * tamanho_cel)
@@ -154,6 +161,17 @@ class cobra:
         elif head_relation == Vector2(-1,0): self.head = self.headL
         elif head_relation == Vector2(0,1): self.head = self.headN
         elif head_relation == Vector2(0,-1): self.head = self.headS
+
+    def sprite_head_comer(self, fruta_pos):
+        # Calcula a diferença entre a cabeça e a fruta
+        distancia_vetor = fruta_pos - self.body[0]
+        
+        # Se a distância for de apenas 1 célula (adjacente)
+        if distancia_vetor.length() == 1:
+            if distancia_vetor == Vector2(0, -1): self.head = self.head_cN
+            elif distancia_vetor == Vector2(0, 1): self.head = self.head_cS
+            elif distancia_vetor == Vector2(-1, 0): self.head = self.head_cO
+            elif distancia_vetor == Vector2(1, 0): self.head = self.head_cL
 
     def update_cauda_graphics(self):
         cauda_relation = self.body[-2] - self.body[-1]
@@ -217,7 +235,7 @@ class Main:
         # Desenha o jogo na superfície interna
         self.draw_fundo(self.game_surface)
         self.fruta.draw(self.game_surface)
-        self.cobra.design_cobra(self.game_surface)
+        self.cobra.design_cobra(self.game_surface, self.fruta.pos)
         
         # Posiciona o jogo no centro da moldura
         game_rect = self.game_surface.get_rect(topleft=(offset, offset))
