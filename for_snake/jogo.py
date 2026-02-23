@@ -8,6 +8,7 @@ from pathlib import Path
 # Path
 base_dir = Path(__file__).resolve().parent #pega caminho da pasta onde o jogo esta
 usr_path = base_dir / 'assets'
+sounds_dir = base_dir / 'sounds'
 class Caminhos:
     def __init__(self, folder_path):
        path = Path(folder_path)
@@ -43,6 +44,48 @@ cor_botao   =  (40, 30, 90)
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
+sounds_dir.mkdir(exist_ok=True)
+
+def carregar_som(nome_arquivo, volume=1.0):
+    if not pygame.mixer.get_init():
+        return None
+    arquivo_som = sounds_dir / nome_arquivo
+    if not arquivo_som.exists():
+        print(f"arquivo de som não encontrado: {arquivo_som.name}")
+        return None
+    try:
+        som = pygame.mixer.Sound(str(arquivo_som))
+        som.set_volume(volume)
+        return som
+    except Exception as e:
+        print(f"AVISO: Som '{arquivo_som.name}' não carregado. Erro: {e}")
+        return None
+
+def tocar_som(som):
+    if som is None:
+        return
+    try:
+        som.play()
+    except Exception as e:
+        print(f"AVISO: Não foi possível tocar um efeito sonoro. Erro: {e}")
+
+def iniciar_soundtrack():
+    if not pygame.mixer.get_init():
+        return
+    arquivo_trilha = sounds_dir / "soundtrack.mp3"
+    if not arquivo_trilha.exists():
+        print(f"AVISO: trilha sonora não encontrada: {arquivo_trilha.name}")
+        return
+    try:
+        pygame.mixer.music.load(str(arquivo_trilha))
+        pygame.mixer.music.set_volume(0.35)
+        pygame.mixer.music.play(-1)
+    except Exception as e:
+        print(f"AVISO: Trilha sonora não carregada. Erro: {e}")
+
+som_comer_a_maca = carregar_som("comer_a_maca.mp3", 0.7)
+som_bater_na_parede = carregar_som("bater_na_parede.mp3", 0.8)
+som_iniciar_jogo = carregar_som("iniciar_jogo.mp3", 0.9)
 
 tela = pygame.display.set_mode((largura_tela, altura_tela))
 pygame.display.set_caption("FOR_SNAKE")
@@ -201,7 +244,7 @@ class cobra:
         self.new_block = True
 
     def play_crunch_sound(self):
-        pass
+        tocar_som(som_comer_a_maca)
 
 class Main:
     def __init__(self):
@@ -285,6 +328,7 @@ class Main:
 
     def check_fail(self):
         if not 0 <= self.cobra.body[0].x < num_cel_x or not 0 <= self.cobra.body[0].y < num_cel_y:
+            tocar_som(som_bater_na_parede)
             self.game_over()
         for block in list(self.cobra.body)[1:]:
             if block == self.cobra.body[0]:
@@ -306,6 +350,8 @@ class Main:
             self.cobra.direction_queue.append(target_dir)
 
 main_game = Main()
+iniciar_soundtrack()
+tocar_som(som_iniciar_jogo)
 pygame.time.set_timer(MOVE_UPDATE_EVENT, velocidade_cobra_ms)
 
 while True:
