@@ -72,10 +72,30 @@ game_font = pygame.font.Font(None, 24)
 score_tabela = pygame.Rect(LARGURA/2 - 100, ALTURA - 150, 200, 50)
 
 lista_de_linhas = []
+recordista = ["0",0]
 try:
     with open("score.txt", "r", encoding="utf-8") as arquivo:
         texto_completo = arquivo.read()
         lista_de_linhas = texto_completo.splitlines() #essa linha ta separando uma lista de linhas do arquivo
+        cont = 0
+        pontos2 = 0
+        #essa parte ta buscando o maior recorde da lista
+        for linha in lista_de_linhas:
+            pontos1= linha.split(",")
+            #print(pontos1)
+            #print("ola mundo0")
+            if (cont>0):
+                #print("ola mundo1")
+                if (int(pontos1[-1]) > int(pontos2)): 
+                    #print("ola mundo2")
+                    recordista = [pontos1[0],int(pontos1[-1])]
+                    #print(recordista) 
+                    pontos2 = pontos1[-1] 
+                                
+            
+            #print(pontos1)
+            cont += 1
+        cont = 0
         arquivo.close() 
 except FileNotFoundError:
     with open('score.txt', 'x', encoding='utf-8') as arquivo:
@@ -83,7 +103,7 @@ except FileNotFoundError:
         arquivo.close() 
         pass
     
-        
+#print(recordista)        
 ################################
 
 # --- DEFINIÇÃO DO BOTÃO ---
@@ -156,7 +176,7 @@ while True:
         tela.blit(texto_botao, rect_texto_botao)
         
         pygame.draw.rect(tela, cor_botao, score_tabela)
-        texto_score = game_font.render(f"RECORDE:\n{lista_de_linhas[0]}", True, PRETO)
+        texto_score = game_font.render(f"RECORDE:\n{recordista[0]} - {recordista[1]}", True, PRETO)
         rect_score_tabela = texto_score.get_rect(center=score_tabela.center)
         tela.blit(texto_score, rect_score_tabela)
         

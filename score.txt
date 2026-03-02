@@ -1,0 +1,4 @@
+nome,ponto
+Sil,1000
+Rog,20
+San,500
